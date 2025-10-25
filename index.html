@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mini Netflix Clone</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="brand" aria-label="Mini Netflix">
+      <span class="dot" aria-hidden="true"></span>
+      <span>Netflux</span>
+    </div>
+    <nav class="nav" aria-label="Principal">
+      <a href="#">Início</a>
+      <a href="#">Séries</a>
+      <a href="#">Filmes</a>
+      <a href="#">Minha Lista</a>
+    </nav>
+    <div class="actions">
+      <button class="btn" aria-label="Pesquisar">🔎</button>
+      <button class="btn-accent btn">Entrar</button>
+    </div>
+  </header>
+
+  <section class="hero" role="region" aria-label="Destaque">
+    <div>
+      <h1>Novidades que você vai maratonar</h1>
+      <p>Descubra lançamentos e clássicos selecionados para você. Assista onde e quando quiser.</p>
+      <div class="cta">
+        <button class="btn-accent btn" id="playNow">▶️ Assistir agora</button>
+        <button class="btn" id="moreInfo">ℹ️ Mais informações</button>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="section">
+      <h2>Populares na Netflux</h2>
+      <div class="row">
+        <button class="control left" aria-label="voltar" data-control="popular:-1">◀</button>
+        <div class="scroller" id="row-popular" tabindex="0" aria-label="Populares"></div>
+        <button class="control right" aria-label="avançar" data-control="popular:1">▶</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Lançamentos</h2>
+      <div class="row">
+        <button class="control left" aria-label="voltar" data-control="new:-1">◀</button>
+        <div class="scroller" id="row-new" tabindex="0" aria-label="Lançamentos"></div>
+        <button class="control right" aria-label="avançar" data-control="new:1">▶</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Para você</h2>
+      <div class="row">
+        <button class="control left" aria-label="voltar" data-control="foru:-1">◀</button>
+        <div class="scroller" id="row-foru" tabindex="0" aria-label="Para você"></div>
+        <button class="control right" aria-label="avançar" data-control="foru:1">▶</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Feito por Leonhard. Este é um clone inspirado na Netflix.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
