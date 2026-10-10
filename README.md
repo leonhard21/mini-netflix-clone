@@ -1,24 +1,49 @@
 # Mini Netflix Clone
 
-Aplicacao front-end que simula uma interface de streaming de video, inspirada na Netflix. O projeto consome uma API externa para exibir filmes e series em cartaz, organizados em categorias.
+Plataforma de streaming inspirada na Netflix, em evolução de um protótipo estático para uma aplicação completa com conta de usuário, catálogo real e persistência de dados.
 
-## Funcionalidades
+> Em construção seguindo um roadmap de 10 semanas. A versão estática original está preservada em [`legacy/`](legacy/).
 
-- Listagem dinamica de filmes e series obtidos via API
-- Interface com carrosseis de categorias
-- Layout responsivo inspirado em plataformas de streaming
+## Stack
 
-## Tecnologias utilizadas
+- **Frontend:** React + Vite (`client/`)
+- **Backend:** Node.js + Express (`server/`)
+- **Banco de dados:** MongoDB + Mongoose
+- **Autenticação:** JWT + bcrypt
+- **Catálogo:** API do [TMDB](https://www.themoviedb.org/documentation/api)
 
-- HTML5
-- CSS3
-- JavaScript
+## Funcionalidades planejadas
+
+- Cadastro e login de usuário
+- Catálogo de filmes/séries com dados reais (TMDB)
+- Detalhes do título com trailer
+- Lista de favoritos por usuário ("Minha Lista")
+- Busca
 
 ## Como executar
 
-1. Clone este repositorio
-2. Abra o arquivo index.html no navegador
+### Backend
 
-## Demo
+```bash
+cd server
+cp .env.example .env   # preencha MONGODB_URI, JWT_SECRET e TMDB_API_KEY
+npm install
+npm run dev
+```
 
-Acesse a versao publicada em: https://leonhard21.github.io/mini-netflix-clone/
+### Frontend
+
+```bash
+cd client
+cp .env.example .env
+npm install
+npm run dev
+```
+
+## Estrutura
+
+```
+client/   # aplicação React (interface)
+server/   # API Express (autenticação, proxy do TMDB, dados do usuário)
+legacy/   # versão estática original (HTML/CSS/JS), mantida como referência
+```
