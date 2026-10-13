@@ -49,3 +49,11 @@ export async function login(req, res) {
     res.status(500).json({ message: 'Erro ao fazer login.' });
   }
 }
+
+export async function me(req, res) {
+  const user = await User.findById(req.userId).select('-password');
+  if (!user) {
+    return res.status(404).json({ message: 'Usuário não encontrado.' });
+  }
+  res.json(user);
+}
