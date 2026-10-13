@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 export async function register(req, res) {
@@ -20,5 +21,31 @@ export async function register(req, res) {
     res.status(201).json({ id: user._id, name: user.name, email: user.email });
   } catch (error) {
     res.status(500).json({ message: 'Erro ao criar usuário.' });
+  }
+}
+
+export async function login(req, res) {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Informe e-mail e senha.' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: 'E-mail ou senha inválidos.' });
+    }
+
+    const passwordMatches = await bcrypt.compare(password, user.password);
+    if (!passwordMatches) {
+      return res.status(401).json({ message: 'E-mail ou senha inválidos.' });
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao fazer login.' });
   }
 }
