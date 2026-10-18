@@ -3,6 +3,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import { connectDB } from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
+import catalogRoutes from './routes/catalogRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -15,6 +16,7 @@ app.get('/health', (_req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/catalog', catalogRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
