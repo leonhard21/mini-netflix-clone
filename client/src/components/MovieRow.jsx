@@ -1,6 +1,6 @@
 import MovieCard from './MovieCard';
 
-function MovieRow({ title, movies }) {
+function MovieRow({ title, movies, onSelect }) {
   if (!movies.length) return null;
 
   return (
@@ -8,7 +8,7 @@ function MovieRow({ title, movies }) {
       <h2>{title}</h2>
       <div className="movie-row-track">
         {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
+          <MovieCard key={movie.id} movie={movie} onSelect={onSelect} />
         ))}
       </div>
     </section>

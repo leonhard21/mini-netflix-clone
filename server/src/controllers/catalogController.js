@@ -48,3 +48,20 @@ export async function search(req, res) {
     res.status(502).json({ message: 'Não foi possível realizar a busca no momento.' });
   }
 }
+
+export async function getMovieDetails(req, res) {
+  const { id } = req.params;
+  const cacheKey = `movie:${id}`;
+  const cached = getFromCache(cacheKey);
+  if (cached) return res.json(cached);
+
+  try {
+    const { data } = await tmdb.get(`/movie/${id}`, {
+      params: { append_to_response: 'videos,credits' },
+    });
+    setCache(cacheKey, data);
+    res.json(data);
+  } catch (error) {
+    res.status(502).json({ message: 'Não foi possível carregar os detalhes do título.' });
+  }
+}

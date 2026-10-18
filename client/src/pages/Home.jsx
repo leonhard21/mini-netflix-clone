@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getTrending, getGenres } from '../api/catalog';
+import { getTrending, getGenres, getMovieDetails } from '../api/catalog';
 import Hero from '../components/Hero';
 import MovieRow from '../components/MovieRow';
+import MovieModal from '../components/MovieModal';
 import './Home.css';
 
 function Home() {
@@ -11,6 +12,11 @@ function Home() {
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [modalError, setModalError] = useState('');
+  const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
     async function loadCatalog() {
@@ -27,6 +33,19 @@ function Home() {
 
     loadCatalog();
   }, []);
+
+  useEffect(() => {
+    if (!selectedId) return;
+
+    setModalLoading(true);
+    setModalError('');
+    setSelectedMovie(null);
+
+    getMovieDetails(selectedId)
+      .then((res) => setSelectedMovie(res.data))
+      .catch(() => setModalError('Não foi possível carregar os detalhes do título.'))
+      .finally(() => setModalLoading(false));
+  }, [selectedId]);
 
   const genreRows = genres
     .map((genre) => ({
@@ -51,11 +70,20 @@ function Home() {
       {!loading && !error && (
         <>
           <Hero movie={trending[0]} />
-          <MovieRow title="Em alta" movies={trending} />
+          <MovieRow title="Em alta" movies={trending} onSelect={setSelectedId} />
           {genreRows.map(({ genre, movies }) => (
-            <MovieRow key={genre.id} title={genre.name} movies={movies} />
+            <MovieRow key={genre.id} title={genre.name} movies={movies} onSelect={setSelectedId} />
           ))}
         </>
+      )}
+
+      {selectedId && (
+        <MovieModal
+          movie={selectedMovie}
+          loading={modalLoading}
+          error={modalError}
+          onClose={() => setSelectedId(null)}
+        />
       )}
     </div>
   );
