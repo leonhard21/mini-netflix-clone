@@ -5,6 +5,13 @@ const userSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true },
+    watchlist: [
+      {
+        movieId: { type: Number, required: true },
+        title: { type: String, required: true },
+        posterPath: { type: String },
+      },
+    ],
   },
   { timestamps: true }
 );

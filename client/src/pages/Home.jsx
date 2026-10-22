@@ -1,22 +1,21 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { getTrending, getGenres, getMovieDetails } from '../api/catalog';
+import { getTrending, getGenres } from '../api/catalog';
+import { useWatchlist } from '../context/WatchlistContext';
+import { useMovieDetails } from '../hooks/useMovieDetails';
+import AppHeader from '../components/AppHeader';
 import Hero from '../components/Hero';
 import MovieRow from '../components/MovieRow';
 import MovieModal from '../components/MovieModal';
 import './Home.css';
 
 function Home() {
-  const { user, logout } = useAuth();
   const [trending, setTrending] = useState([]);
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const [selectedMovie, setSelectedMovie] = useState(null);
-  const [modalLoading, setModalLoading] = useState(false);
-  const [modalError, setModalError] = useState('');
-  const [selectedId, setSelectedId] = useState(null);
+  const { isInWatchlist, toggleWatchlist } = useWatchlist();
+  const { selectedId, setSelectedId, movie, loading: modalLoading, error: modalError } = useMovieDetails();
 
   useEffect(() => {
     async function loadCatalog() {
@@ -34,19 +33,6 @@ function Home() {
     loadCatalog();
   }, []);
 
-  useEffect(() => {
-    if (!selectedId) return;
-
-    setModalLoading(true);
-    setModalError('');
-    setSelectedMovie(null);
-
-    getMovieDetails(selectedId)
-      .then((res) => setSelectedMovie(res.data))
-      .catch(() => setModalError('Não foi possível carregar os detalhes do título.'))
-      .finally(() => setModalLoading(false));
-  }, [selectedId]);
-
   const genreRows = genres
     .map((genre) => ({
       genre,
@@ -56,13 +42,7 @@ function Home() {
 
   return (
     <div className="home">
-      <header className="home-header">
-        <span className="home-brand">Mini Netflix Clone</span>
-        <div className="home-user">
-          <span>Olá, {user?.name}</span>
-          <button onClick={logout}>Sair</button>
-        </div>
-      </header>
+      <AppHeader />
 
       {loading && <p className="home-status">Carregando catálogo...</p>}
       {error && <p className="home-status">{error}</p>}
@@ -70,16 +50,29 @@ function Home() {
       {!loading && !error && (
         <>
           <Hero movie={trending[0]} />
-          <MovieRow title="Em alta" movies={trending} onSelect={setSelectedId} />
+          <MovieRow
+            title="Em alta"
+            movies={trending}
+            onSelect={setSelectedId}
+            isFavorite={isInWatchlist}
+            onToggleFavorite={toggleWatchlist}
+          />
           {genreRows.map(({ genre, movies }) => (
-            <MovieRow key={genre.id} title={genre.name} movies={movies} onSelect={setSelectedId} />
+            <MovieRow
+              key={genre.id}
+              title={genre.name}
+              movies={movies}
+              onSelect={setSelectedId}
+              isFavorite={isInWatchlist}
+              onToggleFavorite={toggleWatchlist}
+            />
           ))}
         </>
       )}
 
       {selectedId && (
         <MovieModal
-          movie={selectedMovie}
+          movie={movie}
           loading={modalLoading}
           error={modalError}
           onClose={() => setSelectedId(null)}
