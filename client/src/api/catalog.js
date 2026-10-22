@@ -11,3 +11,7 @@ export function getGenres() {
 export function getMovieDetails(id) {
   return api.get(`/api/catalog/movies/${id}`);
 }
+
+export function searchMovies(query) {
+  return api.get('/api/catalog/search', { params: { query } });
+}

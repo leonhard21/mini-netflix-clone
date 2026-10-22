@@ -45,6 +45,35 @@
   color: var(--text);
 }
 
+.home-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-input {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.4rem 0.75rem;
+  color: var(--text);
+  font-size: 0.85rem;
+  width: 180px;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.search-results {
+  padding-top: 2rem;
+}
+
 .home-user {
   display: flex;
   align-items: center;
@@ -257,6 +286,16 @@
 @media (max-width: 640px) {
   .home-header {
     padding: 1rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .home-header-left {
+    gap: 1rem;
+  }
+
+  .search-input {
+    width: 140px;
   }
 
   .hero-content {

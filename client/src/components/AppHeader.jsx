@@ -1,8 +1,27 @@
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function AppHeader() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get('q') || '');
+  const debounceRef = useRef(null);
+
+  useEffect(() => {
+    setQuery(searchParams.get('q') || '');
+  }, [searchParams]);
+
+  function handleChange(event) {
+    const value = event.target.value;
+    setQuery(value);
+
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      navigate(value.trim() ? `/?q=${encodeURIComponent(value.trim())}` : '/');
+    }, 400);
+  }
 
   return (
     <header className="home-header">
@@ -15,9 +34,18 @@ function AppHeader() {
           <Link to="/minha-lista">Minha Lista</Link>
         </nav>
       </div>
-      <div className="home-user">
-        <span>Olá, {user?.name}</span>
-        <button onClick={logout}>Sair</button>
+      <div className="home-header-right">
+        <input
+          type="search"
+          className="search-input"
+          placeholder="Buscar títulos..."
+          value={query}
+          onChange={handleChange}
+        />
+        <div className="home-user">
+          <span>Olá, {user?.name}</span>
+          <button onClick={logout}>Sair</button>
+        </div>
       </div>
     </header>
   );

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getTrending, getGenres } from '../api/catalog';
+import { useSearchParams } from 'react-router-dom';
+import { getTrending, getGenres, searchMovies } from '../api/catalog';
 import { useWatchlist } from '../context/WatchlistContext';
 import { useMovieDetails } from '../hooks/useMovieDetails';
 import AppHeader from '../components/AppHeader';
@@ -9,10 +10,17 @@ import MovieModal from '../components/MovieModal';
 import './Home.css';
 
 function Home() {
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get('q') || '';
+
   const [trending, setTrending] = useState([]);
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState('');
 
   const { isInWatchlist, toggleWatchlist } = useWatchlist();
   const { selectedId, setSelectedId, movie, loading: modalLoading, error: modalError } = useMovieDetails();
@@ -33,6 +41,21 @@ function Home() {
     loadCatalog();
   }, []);
 
+  useEffect(() => {
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
+
+    setSearchLoading(true);
+    setSearchError('');
+
+    searchMovies(query)
+      .then((res) => setSearchResults(res.data.results || []))
+      .catch(() => setSearchError('Não foi possível buscar agora.'))
+      .finally(() => setSearchLoading(false));
+  }, [query]);
+
   const genreRows = genres
     .map((genre) => ({
       genre,
@@ -44,29 +67,50 @@ function Home() {
     <div className="home">
       <AppHeader />
 
-      {loading && <p className="home-status">Carregando catálogo...</p>}
-      {error && <p className="home-status">{error}</p>}
-
-      {!loading && !error && (
-        <>
-          <Hero movie={trending[0]} />
-          <MovieRow
-            title="Em alta"
-            movies={trending}
-            onSelect={setSelectedId}
-            isFavorite={isInWatchlist}
-            onToggleFavorite={toggleWatchlist}
-          />
-          {genreRows.map(({ genre, movies }) => (
+      {query ? (
+        <div className="search-results">
+          {searchLoading && <p className="home-status">Buscando...</p>}
+          {searchError && <p className="home-status">{searchError}</p>}
+          {!searchLoading && !searchError && searchResults.length === 0 && (
+            <p className="home-status">Nenhum resultado para "{query}".</p>
+          )}
+          {!searchLoading && !searchError && searchResults.length > 0 && (
             <MovieRow
-              key={genre.id}
-              title={genre.name}
-              movies={movies}
+              title={`Resultados para "${query}"`}
+              movies={searchResults}
               onSelect={setSelectedId}
               isFavorite={isInWatchlist}
               onToggleFavorite={toggleWatchlist}
             />
-          ))}
+          )}
+        </div>
+      ) : (
+        <>
+          {loading && <p className="home-status">Carregando catálogo...</p>}
+          {error && <p className="home-status">{error}</p>}
+
+          {!loading && !error && (
+            <>
+              <Hero movie={trending[0]} />
+              <MovieRow
+                title="Em alta"
+                movies={trending}
+                onSelect={setSelectedId}
+                isFavorite={isInWatchlist}
+                onToggleFavorite={toggleWatchlist}
+              />
+              {genreRows.map(({ genre, movies }) => (
+                <MovieRow
+                  key={genre.id}
+                  title={genre.name}
+                  movies={movies}
+                  onSelect={setSelectedId}
+                  isFavorite={isInWatchlist}
+                  onToggleFavorite={toggleWatchlist}
+                />
+              ))}
+            </>
+          )}
         </>
       )}
 
