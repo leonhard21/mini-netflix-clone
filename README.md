@@ -4,6 +4,13 @@ Plataforma de streaming inspirada na Netflix, em evolução de um protótipo est
 
 > A versão estática original está preservada em [`legacy/`](legacy/).
 
+## Demo
+
+- **Aplicação completa:** https://mini-netflix-clone-five.vercel.app
+- **Versão estática original:** https://leonhard21.github.io/mini-netflix-clone/
+
+> O backend roda no plano gratuito do Render, que "dorme" após um tempo sem uso — a primeira requisição depois de um tempo parado pode demorar até ~50s para responder.
+
 ## Stack
 
 - **Frontend:** React + Vite (`client/`)
