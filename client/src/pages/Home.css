@@ -82,6 +82,28 @@
   color: var(--text-muted);
 }
 
+.home-user a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.home-user a:hover {
+  color: var(--text);
+}
+
+.home-user .home-cta {
+  background: var(--accent);
+  color: #fff;
+  padding: 0.4rem 0.9rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.home-user .home-cta:hover {
+  color: #fff;
+  opacity: 0.9;
+}
+
 .home-status {
   padding: 4rem 2rem;
   text-align: center;

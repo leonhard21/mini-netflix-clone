@@ -31,7 +31,7 @@ function AppHeader() {
         </Link>
         <nav className="home-nav">
           <Link to="/">Catálogo</Link>
-          <Link to="/minha-lista">Minha Lista</Link>
+          {user && <Link to="/minha-lista">Minha Lista</Link>}
         </nav>
       </div>
       <div className="home-header-right">
@@ -42,10 +42,19 @@ function AppHeader() {
           value={query}
           onChange={handleChange}
         />
-        <div className="home-user">
-          <span>Olá, {user?.name}</span>
-          <button onClick={logout}>Sair</button>
-        </div>
+        {user ? (
+          <div className="home-user">
+            <span>Olá, {user.name}</span>
+            <button onClick={logout}>Sair</button>
+          </div>
+        ) : (
+          <div className="home-user">
+            <Link to="/login">Entrar</Link>
+            <Link to="/register" className="home-cta">
+              Cadastre-se
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );

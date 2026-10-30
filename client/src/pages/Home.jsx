@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getTrending, getGenres, searchMovies } from '../api/catalog';
+import { useAuth } from '../context/AuthContext';
 import { useWatchlist } from '../context/WatchlistContext';
 import { useMovieDetails } from '../hooks/useMovieDetails';
 import AppHeader from '../components/AppHeader';
@@ -12,6 +13,7 @@ import './Home.css';
 function Home() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
+  const navigate = useNavigate();
 
   const [trending, setTrending] = useState([]);
   const [genres, setGenres] = useState([]);
@@ -22,8 +24,17 @@ function Home() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState('');
 
+  const { user } = useAuth();
   const { isInWatchlist, toggleWatchlist } = useWatchlist();
   const { selectedId, setSelectedId, movie, loading: modalLoading, error: modalError } = useMovieDetails();
+
+  function handleToggleFavorite(movie) {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    toggleWatchlist(movie);
+  }
 
   useEffect(() => {
     async function loadCatalog() {
@@ -80,7 +91,7 @@ function Home() {
               movies={searchResults}
               onSelect={setSelectedId}
               isFavorite={isInWatchlist}
-              onToggleFavorite={toggleWatchlist}
+              onToggleFavorite={handleToggleFavorite}
             />
           )}
         </div>
@@ -97,7 +108,7 @@ function Home() {
                 movies={trending}
                 onSelect={setSelectedId}
                 isFavorite={isInWatchlist}
-                onToggleFavorite={toggleWatchlist}
+                onToggleFavorite={handleToggleFavorite}
               />
               {genreRows.map(({ genre, movies }) => (
                 <MovieRow
@@ -106,7 +117,7 @@ function Home() {
                   movies={movies}
                   onSelect={setSelectedId}
                   isFavorite={isInWatchlist}
-                  onToggleFavorite={toggleWatchlist}
+                  onToggleFavorite={handleToggleFavorite}
                 />
               ))}
             </>
